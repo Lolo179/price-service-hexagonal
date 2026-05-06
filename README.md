@@ -252,3 +252,4 @@ private BrandEntity brand;
 - **Contract-first**: `contract/swagger-contract.yaml` is the source of truth. The API interface and DTOs are generated at compile time via `openapi-generator-maven-plugin`.
 - **MapStruct** handles all object mapping between layers.
 - **H2 in-memory** database — schema created by Hibernate, seeded by `data.sql`.
+-- test change to trigger CI
