@@ -90,6 +90,9 @@ docker build -t price-service .
 
 # Ejecutar contenedor
 docker run -d -p 8080:8080 --name price-service price-service
+
+# Comprobar health (requiere aplicación arrancada)
+curl http://localhost:8080/actuator/health
 ```
 
 ## Convenciones
@@ -103,6 +106,7 @@ docker run -d -p 8080:8080 --name price-service price-service
 - `PricePersistenceAdapter` implementa `PriceRepositoryPort` e inyecta `PriceJpaRepository` y `PricePersistenceMapper`
 - Tests E2E usan `io.rest-assured:spring-mock-mvc:6.0.0` (requiere 6.x para compatibilidad con Spring Framework 7)
 - La colección Postman en `src/test/resources/price-service.postman_collection.json` cubre los 5 casos del ejercicio más 4 casos de error
+- `spring-boot-starter-actuator` expone únicamente `/actuator/health` (`show-details: never`). El CI usa este endpoint para la comprobación de arranque en lugar del endpoint de negocio
 
 ## Perfiles de configuración
 
