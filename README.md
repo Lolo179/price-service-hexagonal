@@ -127,10 +127,25 @@ The repository includes a GitHub Actions workflow at `.github/workflows/ci.yml` 
 **Steps:**
 1. Checkout code
 2. Set up Java 21 (Temurin) with Maven cache
-3. `./mvnw verify` — compiles, runs all 26 tests, and validates the build
+3. `./mvnw verify` — compiles, runs all 17 tests, and validates the build
 4. Uploads Surefire test reports as a build artifact
+5. Starts the JAR and waits for `GET /actuator/health` to return `UP`
+6. Runs the Postman collection via Newman and uploads results as artifact
+7. Stops the application
 
 The workflow must pass before a PR can be merged into `main` (enforced via branch protection rules).
+
+---
+
+## Actuator
+
+Available at **http://localhost:8080/actuator/health** once the application is running.
+
+```json
+{"groups":["liveness","readiness"],"status":"UP"}
+```
+
+Only the `health` endpoint is exposed. Details are hidden (`show-details: never`).
 
 ---
 
