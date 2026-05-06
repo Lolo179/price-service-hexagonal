@@ -98,6 +98,11 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Actuator — exposes /actuator/health for liveness/readiness checks -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<!-- RestAssured for E2E tests (spring-mock-mvc avoids Groovy 5.x proxy NPE) -->
 		<dependency>
 			<groupId>io.rest-assured</groupId>
