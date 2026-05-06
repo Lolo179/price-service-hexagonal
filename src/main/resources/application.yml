@@ -35,6 +35,16 @@ spring:
     console:
       enabled: false
 
+# Actuator — only health endpoint exposed
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
 # Server
 server:
   port: 8080
