@@ -18,7 +18,8 @@ public class PricePersistenceAdapter implements PriceRepositoryPort {
 
     @Override
     public Optional<Price> findApplicablePrice(Long brandId, Long productId, LocalDateTime applicationDate) {
-        return priceJpaRepository.findApplicablePrice(brandId, productId, applicationDate)
+        return priceJpaRepository.findTop1ByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
+                        brandId, productId, applicationDate, applicationDate)
                 .map(pricePersistenceMapper::toDomain);
     }
 }
