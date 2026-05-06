@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: Price Service API
+  description: REST service to query the applicable price for a product in an Inditex brand at a given date and time.
+  version: 1.0.0
+
+servers:
+  - url: /
+
+tags:
+  - name: Prices
+    description: Price consultation operations
+
+paths:
+  /api/v1/prices:
+    get:
+      tags:
+        - Prices
+      summary: Get applicable price
+      description: Returns the price that applies to a product for a given brand at the specified application date, resolved by priority when multiple rates overlap.
+      operationId: getApplicablePrice
+      parameters:
+        - name: applicationDate
+          in: query
+          required: true
+          description: Date and time for which the price is requested (ISO 8601 format, e.g. 2020-06-14T10:00:00)
+          schema:
+            type: string
+            format: date-time
+        - name: productId
+          in: query
+          required: true
+          description: Product identifier
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: brandId
+          in: query
+          required: true
+          description: Brand identifier (e.g. 1 = ZARA)
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Applicable price found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceResponse'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No applicable price found for the given parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    PriceResponse:
+      type: object
+      description: Applicable price result
+      required:
+        - productId
+        - brandId
+        - priceList
+        - startDate
+        - endDate
+        - price
+        - currency
+      properties:
+        productId:
+          type: integer
+          format: int64
+          description: Product identifier
+        brandId:
+          type: integer
+          format: int64
+          description: Brand identifier
+        priceList:
+          type: integer
+          format: int32
+          description: Price rate identifier
+        startDate:
+          type: string
+          format: date-time
+          description: Start date of the applicable rate
+        endDate:
+          type: string
+          format: date-time
+          description: End date of the applicable rate
+        price:
+          type: number
+          multipleOf: 0.01
+          description: Final sale price with up to 2 decimal places
+        currency:
+          $ref: '#/components/schemas/Currency'
+
+    Currency:
+      type: string
+      description: ISO 4217 currency code
+      enum:
+        - EUR
+
+    ErrorResponse:
+      type: object
+      description: Error information
+      properties:
+        message:
+          type: string
+          description: Human-readable error description

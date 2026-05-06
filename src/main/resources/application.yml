@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: price-service
+
+  # H2 in-memory database
+  datasource:
+    url: jdbc:h2:mem:pricesdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  # JPA / Hibernate
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    # Run data.sql after Hibernate creates the schema
+    defer-datasource-initialization: true
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  sql:
+    init:
+      mode: always
+
+  # Parse LocalDateTime request params from ISO 8601 strings (e.g. 2020-06-14T10:00:00)
+  mvc:
+    format:
+      date-time: iso
+
+  # H2 Console disabled by default — override in application-local.yml for local development
+  h2:
+    console:
+      enabled: false
+
+# Server
+server:
+  port: 8080
+
+# Logging — INFO by default; override in application-local.yml for verbose output
+logging:
+  level:
+    com.inditex.prices: INFO
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"

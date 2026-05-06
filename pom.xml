@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.0.5</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.inditex</groupId>
+	<artifactId>price-service</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name/>
+	<description/>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>21</java.version>
+		<mapstruct.version>1.6.3</mapstruct.version>
+		<springdoc.version>2.8.4</springdoc.version>
+		<openapi-generator.version>7.12.0</openapi-generator.version>
+		<rest-assured.version>6.0.0</rest-assured.version>
+	</properties>
+	<dependencies>
+		<!-- Web -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<!-- JPA -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<!-- Validation -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<!-- OpenAPI / Swagger UI -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+		<!-- MapStruct -->
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+		<!-- Dev tools -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<!-- H2 -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!-- Test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Boot 4.x: @DataJpaTest moved to its own starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Boot 4.x: @AutoConfigureMockMvc moved to its own starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- RestAssured for E2E tests (spring-mock-mvc avoids Groovy 5.x proxy NPE) -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>spring-mock-mvc</artifactId>
+			<version>${rest-assured.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- OpenAPI Generator: generates API interface + DTOs from swagger-contract.yaml at compile time -->
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>${openapi-generator.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/contract/swagger-contract.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<output>${project.basedir}</output>
+							<!--
+							  The generator appends src/main/java internally, so classes land at:
+							    src/main/java/com/inditex/prices/controller/api/PricesApi.java
+							    src/main/java/com/inditex/prices/controller/dto/PriceResponse.java
+							    src/main/java/com/inditex/prices/controller/dto/ErrorResponse.java
+							  Visible in the IDE. Excluded from git via .gitignore.
+							-->
+							<addCompileSourceRoot>true</addCompileSourceRoot>
+							<!--
+							  Only generate the API interface and model classes.
+							  Suppresses supporting files (pom.xml, README.md, Application.java, etc.)
+							  that the generator would otherwise create in target/ as noise.
+							-->
+							<generateSupportingFiles>false</generateSupportingFiles>
+						<!-- Generated classes land in the REST adapter package (hexagonal: infrastructure input) -->
+						<apiPackage>com.inditex.prices.infrastructure.input.rest.api</apiPackage>
+						<modelPackage>com.inditex.prices.infrastructure.input.rest.dto</modelPackage>
+							<configOptions>
+								<interfaceOnly>true</interfaceOnly>
+								<useSpringBoot3>true</useSpringBoot3>
+								<useTags>true</useTags>
+								<skipDefaultInterface>true</skipDefaultInterface>
+								<openApiNullable>false</openApiNullable>
+								<useBeanValidation>true</useBeanValidation>
+								<dateLibrary>java8</dateLibrary>
+							</configOptions>
+							<typeMappings>
+								<typeMapping>DateTime=LocalDateTime</typeMapping>
+							</typeMappings>
+							<importMappings>
+								<importMapping>LocalDateTime=java.time.LocalDateTime</importMapping>
+							</importMappings>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Spring Boot -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!-- Compiler: Lombok + MapStruct annotation processors (order matters) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</path>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok-mapstruct-binding</artifactId>
+							<version>0.2.0</version>
+						</path>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -1,0 +1,34 @@
+# -------------------------------------------------------
+# Test profile: overrides for integration tests
+# @SpringBootTest tests activate this with @ActiveProfiles("test")
+# -------------------------------------------------------
+spring:
+  # Dedicated H2 instance for full-stack integration tests (isolated from main app)
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+
+  # Hibernate creates schema from @Entity, data.sql runs after (same as main config)
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  sql:
+    init:
+      mode: always
+
+  # Disable H2 console in tests
+  h2:
+    console:
+      enabled: false
+
+# Silence logs during tests
+logging:
+  level:
+    com.inditex.prices: WARN
+    org.springframework.web: WARN
+    org.hibernate.SQL: "OFF"
